@@ -16,3 +16,4 @@ Check out the :doc:`overview` section for a introduction into the problem, and h
 
    overview
    install
+   node

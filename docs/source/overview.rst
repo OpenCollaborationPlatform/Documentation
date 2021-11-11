@@ -131,8 +131,9 @@ Peer to Peer setup
 ------------------
 
 OCP as an open source project has two main driving principles that guide our setup:
-1. No cost of service: Whenever possible build the service in a way that does not generate hosting cost so that no fees need to be charged
-2. Long term availability: Make sure the service works independend of any companies success or failure, so that there is no risk of shutting down for apps using the service
+
+* No cost of service: Whenever possible build the service in a way that does not generate hosting cost so that no fees need to be charged
+* Long term availability: Make sure the service works independend of any companies success or failure, so that there is no risk of shutting down for apps using the service
 
 With those things in mind OCP decided to work on a peer-to-peer basis. There are no servers involved, no central entities required. Every user sets up a OCP node on his machine, which enables him to connect to other nodes and work on shared documents.
 

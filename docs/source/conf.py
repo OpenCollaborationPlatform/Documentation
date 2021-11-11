@@ -10,11 +10,12 @@ release = '0.1'
 version = '0.1.0'
 
 # -- General configuration
+sys.path.append(os.path.abspath("./ext"))
 
 extensions = [
     'sphinx.ext.duration',
-    'sphinx.ext.doctest',
-    'sphinx.ext.autodoc',
+    'dmldomain',
+    'wampdomain'
 ]
 
 templates_path = ['_templates']
