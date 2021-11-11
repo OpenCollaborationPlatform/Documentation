@@ -12,7 +12,7 @@ release = '0.1'
 version = '0.1.0'
 
 # -- General configuration
-sys.path.append(os.path.abspath("./ext"))
+sys.path.append(os.path.abspath("./../ext"))
 
 extensions = [
     'sphinx.ext.duration',
