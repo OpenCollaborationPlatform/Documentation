@@ -112,7 +112,7 @@ API
 	.. dml:function:: Keys()
 	
 		Provides access to all keys in the map. The type of the keys is dependend on
-		the Maps *key* property. If called from javascript, an unmutable array is returned,
+		the Maps :dml:prop:`key` property. If called from javascript, an unmutable array is returned,
 		if called via WAMP API it will be the list type that is supported by the
 		calling language  (e.g. List for python)
 	
@@ -155,25 +155,25 @@ API
 		need to be consitent with the Maps defining properties.
 	
 		If the Map value type is a object, this function will fail. It is not possible,
-		to set it to a different object or override it once created. Use the *New* function
+		to set it to a different object or override it once created. Use the :dml:func:`New` function
 		for creating the object for a given key.
 	
-		:throws: If key is of wrong type (must be equal to key property)
-		:throws: If value is of wrong type (must be equal to value property)
+		:throws: If key is of wrong type (must be equal to :dml:prop:`key` property)
+		:throws: If value is of wrong type (must be equal to :dml:prop:`value` property)
 		:throws: If value type of Map is a Object
 	
 	
 
 	
-	.. dml:function:: Net(key)
+	.. dml:function:: New(key)
 	
 		Creates a new entry with the given key and sets it to the value types default,
 		e.g. 0 for int, "" for string etc. If the value type is a Object it will be fully
-		setup, and its onCreated event will be called. The *New* function is the only way to
-		create a key entry if value type is an Object, as *Set* will fail in this case.
+		setup, and its onCreated event will be called. The :dml:func:`New` function is the only way to
+		create a key entry if value type is an Object, as :dml:func:`Set` will fail in this case.
 	
 		:throws: If key already exists
-		:throws: If key is of wrong type (must be equal to key property)
+		:throws: If key is of wrong type (must be equal to :dml:prop:`key` property)
 		:return any value: The stored value for given key
 	
 	
@@ -185,7 +185,7 @@ API
 		will be called and afterards will  be deleted.
 	
 		:throws: If key does not exist
-		:throws: If key is of wrong type (must be equal to key property)
+		:throws: If key is of wrong type (must be equal to :dml:prop:`key` property)
 	
 	
 
@@ -228,5 +228,144 @@ API
 		new one when emitted.
 
 		:argument string Property: Name of the property thats was changed
+
+
+
+.. dml:behaviour:: Transaction
+	:derived: Behaviour
+
+	Defines how a Object behaves in transactions. With this behaviour defined in a Object
+	it will become part of the current transaction when a change occurs. If any other user tries
+	to edit it an error will be raised and the action fails.
+
+	Any change within the object does trigger the transaction behaviour, be it a set property
+	or any Object internal change, like a new entry in a Map. If recursive is true, the same
+	holds for any change in a child- or subobject. Note that a change in a child will not add the
+	child to the current transaction, but the Object which has the behaviour defined.
+
+
+	
+	.. dml:function:: Add()
+	
+		Adds the Object to the current transaction. If the Object is already part of the
+		current transaction nothing happens, and no error is thrown.
+	
+		:throws: If no transaction is open for current user
+		:throws: If Object is already part of a transaction of annother user
+	
+	
+
+	
+	.. dml:function:: InTransaction()
+	
+		Checks if the Object is currently part in any transaction
+	
+		:return bool IsPart: True if in a transaction, false otherwise
+	
+	
+
+	
+	.. dml:function:: InCurrentTransaction()
+	
+		Checks if the Object is currently part in the users transaction
+	
+		:return bool IsPart: True if in users transaction, false otherwise
+	
+	
+
+	
+	.. dml:function:: InDifferentTransaction()
+	
+		Checks if the Object is currently part in a transaction of annother user
+	
+		:return bool IsPart: True if in other users transaction, false otherwise
+	
+	
+
+	
+	.. dml:function:: CanBeAdded()
+		:virtual:
+	
+		Allows custom logic for checking if the Object is allowed to take part in the
+		current transaction. To be overriden and implemented by the user. If false is returned,
+		the action that lead to the Object being added to the transaction fails.
+		Note that it is not needed to check if the Object is already part of annother
+		transaction, this is still done internally. This function is to be used for custom logic
+		only.
+	
+		:return bool Possible: True if it is allowed to add object to current transaction
+	
+	
+
+	
+	.. dml:function:: CanBeClosed()
+		:virtual:
+	
+		Allows custom logic for checking if the transaction, in which the Object takes part,
+		is allowed to be closed. To be overriden and implemented by the user. If false is returned,
+		closing the transaction fails and it stays open. The implementation should make sure
+		that the user is informed about the reasons, so that he can correct it bevore trying
+		to close the transaction again.
+	
+		.. note:: This function is not called for aborting transactions. Aborting cannot
+				  be prevented.
+	
+		:return bool Possible: True if it is allowed to close the current transaction
+	
+	
+
+	
+	.. dml:function:: DependentObjects()
+		:virtual:
+	
+		Allows custom logic for defining dependent Objeccts. To be overriden and implemented
+		by the user. This function will be called when the Object is added to the transaction,
+		and the list of returned Objects will then be added to the current transaction too.
+	
+		:return List[Objecct] Dependencies: All Objects that need to also be part of the transaction
+	
+	
+
+	
+	.. dml:event:: onParticipation
+	
+		Emitted when the Object becomes part of the users current transaction. If a JavaScript
+		callback for this event throws an error the adding of the Object fails, as well as the
+		user action triggering it. Hence this can be used the same way as overriding *CanBeAdded*
+	
+	.. dml:event:: onClosing
+	
+		Emitted when current transaction, of which the Object is a part, is closed. If a JavaScript
+		callback for this event throws an error the transaction closing fails, as well as the
+		user action triggering it. Hence this can be used the same way as overriding *CanBeClosed*
+	
+	.. dml:event:: onAborting
+	
+		Emitted when current transaction, of which the Object is a part, is aborted. Errors in
+		callbacks ar ignored, as aborting cannot be stopped.
+	
+	.. dml:event:: onFailure
+	
+		Emitted when adding the object to the current transaction fails, independent of
+		the reason for the fail.
+	
+		:arg str error: The error message describing why it failed
+	
+	
+
+.. dml:behaviour:: PartialTransaction
+	:derived: Behaviour
+
+	Defines how the objects individual keys behaves in transactions. With this behaviour defined in a object
+	its keys can become part of that transaction. A key is any identifier pointing to data, like a property
+	name, a number for a Vector or a key for a map. If the behaviour is recursive keys can also be stacked,
+	like childname.mapkey
+
+	Any change within the object does trigger the transaction behaviour, be it a set property
+	or any Object internal change, like a new entry in a Map. If recursive is true, the same
+	holds for any change in a child- or subobject. Note that a change in a child will not add the
+	child to the current transaction, but the Object which has the behaviour defined.
+
+	.. note:: Keys are relative paths from the behaviours parent object, e.g. MyChild.myProperty
 
 
