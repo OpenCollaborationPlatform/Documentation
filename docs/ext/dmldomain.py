@@ -283,7 +283,6 @@ class DmlProperty(DmlObject):
         'const': directives.flag,
         'readonly': directives.flag,
         'type': directives.unchanged,
-        'jsonly': directives.flag,
     })
     
     doc_field_types = [
@@ -311,8 +310,6 @@ class DmlProperty(DmlObject):
             annotations.append("constant")
         if 'readonly' in self.options:
             annotations.append("readonly")   
-        if 'jsonly' in self.options:
-            annotations.append("JSonly")  
             
         return (typ, name, arglist, annotations)
 
@@ -419,7 +416,7 @@ class DmlBehaviour(DmlObject):
         name  =  sig
         arglist = None
         if "derived" in self.options:
-            arglist = [self.options["derived"]]
+            arglist = [create_xref("bhvr", self.options["derived"], self.env)]
             
         annotations = []
         if 'abstract' in self.options:

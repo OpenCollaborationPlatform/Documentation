@@ -21,6 +21,25 @@ API
 		the hirarchy, either in JavaScript code or as WAMP uri. It is mandatory to set the name
 		of each object.
 
+	.. dml:property:: parent
+		:const:
+		:type: Data
+
+		The parent object of the object. The value is null for the toplevel object.
+
+	.. dml:property:: children
+		:const:
+		:type: [Data]
+
+		A list of all children the Data object has. Note that this are only the children defined
+		in the DML file itself, not the dynamic subobjects some types can add, like maps entries.
+
+	.. dml:property behaviours
+		:const:
+		:type: [Behaviour]
+
+		A list of all behaviours the Data object has attched to it.
+
 	.. dml:event:: onBeforePropertyChange
 
 		Emitted bevore a property of the object changes. At time of emit the
@@ -203,6 +222,12 @@ API
 		A property defining the name of the behaviour. The name can be used to access ut in
 		the hirarchy, either in JavaScript code or as WAMP uri. It is mandatory to set the name
 		of each behaviour.
+
+	.. dml:property:: parent
+		:const:
+		:type: Data
+
+		The parent object of the behaviour, the one which it extends.
 
 	.. dml:property:: recursive
 		:const:
