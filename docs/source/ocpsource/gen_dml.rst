@@ -256,6 +256,48 @@ API
 
 
 
+.. dml:behaviour:: Continuity
+	:derived: Behaviour
+
+	The continuity behaviour helps you to ensure continious updates to a object. The idea is
+	to make updates on a object only possible, if they are based on the latest available data.
+
+	To ensure this, the caller, the one who wants to make a change, need to show that he based
+	his update on the currently existing object. For this, the behaviour adds the :dml:prop:`state`
+	property to the object which represents the current state as a integer. When a set of changes
+	is finished, the state gets incremented (by the user or automatically). Any caller needs to
+	ensure, that his change is based on the currently available data by providing his last
+	state as integer. If this provided known state matches the current :dml:prop:`state` value, the
+	update is allowed, and if it does not match, the update fails.
+
+	..note:: The state increment happens after all user code is executed. Calling "Increment" on a
+			 continuity behaviour marks that object for state increment but does not do it directly.
+			 It is only done just before finishing the WAMP api call. The same holds for automatic
+			 increments.
+
+	.. dml:property:: automatic
+		:const:
+		:type: bool
+		:default: false
+
+		If set to true a state increment is done automatically for each user call that changes
+		the extended object. For example, if a user sets a property on the parent object via
+		the WAMP api, the state of the continuity behaviour is incremented when automatic==true.
+		If annother property of the parent object is changed during the same WAMP api call, the
+		state is not incremented anymore. The next increment can only happen in the next WAMP api
+		call or by using the manual methods of the behaviour.
+
+	..  dml:property:: state
+		:readonly:
+		:type: int
+		:default: 0
+
+		A integer describing the current state of this object. Gets incremented if a new state is
+		reached. This happens either by user action by calling the increment method, or automatically
+		on a change if configured like this.
+
+
+
 .. dml:behaviour:: Transaction
 	:derived: Behaviour
 
